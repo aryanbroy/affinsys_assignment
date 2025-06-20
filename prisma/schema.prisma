@@ -14,9 +14,43 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  password     String
+  balance      Int           @default(0)
+  transactions Transaction[] @relation("SenderTransactions")
+  paymentsMade Transaction[] @relation("ReceivedTransactions")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  products     Product[]
+}
+
+enum TransactionKind {
+  FUNDING
+  PAYMENT
+  PURCHASE
+}
+
+model Transaction {
+  id          Int             @id @default(autoincrement())
+  kind        TransactionKind
+  amt         Int
+  updated_bal Int
+  timestamp   DateTime        @default(now())
+  senderId    Int
+  sender      User            @relation("SenderTransactions", fields: [senderId], references: [id])
+  toUserId    Int?
+  toUser      User?           @relation("ReceivedTransactions", fields: [toUserId], references: [id])
+  Product     Product?        @relation(fields: [productId], references: [id])
+  productId   Int?
+}
+
+model Product {
+  id           Int           @id @default(autoincrement())
+  name         String
+  price        Int
+  description  String
+  createdById  Int
+  createdBy    User          @relation(fields: [createdById], references: [id])
+  transactions Transaction[]
 }
