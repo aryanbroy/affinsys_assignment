@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { transactionController } from "../controllers/transaction.controller";
+import { addFund } from "../controllers/transaction.controller";
 import { autheticate } from "../middleware/auth.middleware";
 
 const transactionRouter = Router();
 
-transactionRouter.route("/fund").post(autheticate, transactionController);
+transactionRouter.route("/fund").post(autheticate, addFund);
 
 export const transactionRoute = transactionRouter;
