@@ -13,7 +13,7 @@ export const autheticate = async (
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return sendErrorResponse(res, 401, "Unauthorized");
+      return sendErrorResponse(res, 401, "Invalid auth header");
     }
 
     const auth = Buffer.from(authHeader.split(" ")[1], "base64")

@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  username     String        @unique
-  password     String
-  balance      Int           @default(0)
-  transactions Transaction[] @relation("SenderTransactions")
-  paymentsMade Transaction[] @relation("ReceivedTransactions")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  products     Product[]
+  id                   Int           @id @default(autoincrement())
+  username             String        @unique
+  password             String
+  balance              Int           @default(0)
+  sentTransactions     Transaction[] @relation("SenderTransactions")
+  receivedTransactions Transaction[] @relation("ReceivedTransactions")
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  products             Product[]
+  purchases            Purchase[]
 }
 
 enum TransactionKind {
@@ -41,16 +42,22 @@ model Transaction {
   sender      User            @relation("SenderTransactions", fields: [senderId], references: [id])
   toUserId    Int?
   toUser      User?           @relation("ReceivedTransactions", fields: [toUserId], references: [id])
-  Product     Product?        @relation(fields: [productId], references: [id])
-  productId   Int?
+}
+
+model Purchase {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Product {
-  id           Int           @id @default(autoincrement())
-  name         String
-  price        Int
-  description  String
-  createdById  Int
-  createdBy    User          @relation(fields: [createdById], references: [id])
-  transactions Transaction[]
+  id          Int        @id @default(autoincrement())
+  name        String
+  price       Int
+  description String
+  createdById Int
+  createdBy   User       @relation(fields: [createdById], references: [id])
+  purchases   Purchase[]
 }
