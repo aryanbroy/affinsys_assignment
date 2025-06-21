@@ -22,8 +22,8 @@ model User {
   receivedTransactions Transaction[] @relation("ReceivedTransactions")
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
-  products             Product[]
-  purchases            Purchase[]
+  products             Product[] // products the user created
+  purchases            Purchase[] // purchases the user has made
 }
 
 enum TransactionKind {
@@ -40,8 +40,8 @@ model Transaction {
   timestamp   DateTime        @default(now())
   senderId    Int
   sender      User            @relation("SenderTransactions", fields: [senderId], references: [id])
-  toUserId    Int?
-  toUser      User?           @relation("ReceivedTransactions", fields: [toUserId], references: [id])
+  toUserId    Int
+  toUser      User            @relation("ReceivedTransactions", fields: [toUserId], references: [id])
 }
 
 model Purchase {

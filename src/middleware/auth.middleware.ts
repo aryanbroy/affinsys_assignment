@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma";
 import bcrypt from "bcrypt";
 import { CustomRequest } from "../utils/authenticate.util";
 
-export const autheticate = async (
+export const authenticate = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction

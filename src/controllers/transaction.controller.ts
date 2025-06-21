@@ -119,3 +119,78 @@ export const payAnotherUser = async (req: CustomRequest, res: Response) => {
     );
   }
 };
+
+export const checkBalance = async (req: CustomRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return sendErrorResponse(res, 400, "Unauthorized to check balance");
+    }
+
+    let { currency } = req.query;
+
+    if (!currency) {
+      currency = "INR";
+    }
+
+    let balance = req.user.balance;
+
+    if (currency !== "INR") {
+      // perform api operations here
+    }
+
+    sendSuccessResponse(res, 200, "Balance successfully checked", {
+      balance,
+      currency,
+    });
+  } catch (error) {
+    sendErrorResponse(
+      res,
+      500,
+      "Internal server error, Error checking balance",
+      error
+    );
+  }
+};
+
+export const checkTransactionHistory = async (
+  req: CustomRequest,
+  res: Response
+) => {
+  try {
+    if (!req.user) {
+      return sendErrorResponse(
+        res,
+        400,
+        "Unauthorized to check transaction history"
+      );
+    }
+
+    const senderId = req.user.id;
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        OR: [
+          {
+            senderId,
+          },
+          {
+            toUserId: senderId,
+          },
+        ],
+      },
+      orderBy: {
+        timestamp: "desc",
+      },
+    });
+
+    sendSuccessResponse(res, 200, "Transaction history successfully checked", {
+      data: transactions,
+    });
+  } catch (error) {
+    sendErrorResponse(
+      res,
+      500,
+      "Internal server error, Error checking transaction history",
+      error
+    );
+  }
+};
