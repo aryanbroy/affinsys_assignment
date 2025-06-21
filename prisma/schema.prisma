@@ -17,7 +17,7 @@ model User {
   id                   Int           @id @default(autoincrement())
   username             String        @unique
   password             String
-  balance              Int           @default(0)
+  balance              Float         @default(0)
   sentTransactions     Transaction[] @relation("SenderTransactions")
   receivedTransactions Transaction[] @relation("ReceivedTransactions")
   createdAt            DateTime      @default(now())
@@ -35,7 +35,7 @@ model Transaction {
   id          Int             @id @default(autoincrement())
   kind        TransactionKind
   amt         Int
-  updated_bal Int
+  updated_bal Float
   timestamp   DateTime        @default(now())
   senderId    Int
   sender      User            @relation("SenderTransactions", fields: [senderId], references: [id])

@@ -2,6 +2,7 @@ import { Response } from "express";
 import { CustomRequest } from "../utils/authenticate.util";
 import { prisma } from "../lib/prisma";
 import { sendErrorResponse, sendSuccessResponse } from "../utils/response.util";
+import { currencyConverter } from "../utils/currencyConverter.util";
 
 export const addFund = async (req: CustomRequest, res: Response) => {
   try {
@@ -135,7 +136,12 @@ export const checkBalance = async (req: CustomRequest, res: Response) => {
     let balance = req.user.balance;
 
     if (currency !== "INR") {
-      // perform api operations here
+      const latestCurrency = await currencyConverter(
+        "INR",
+        currency,
+        process.env.CURRENCY_API_KEY
+      );
+      balance = parseFloat((balance * latestCurrency).toFixed(2));
     }
 
     sendSuccessResponse(res, 200, "Balance successfully checked", {
